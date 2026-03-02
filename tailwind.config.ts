@@ -17,7 +17,7 @@ const config: Config = {
         muted: "#6B7280", // secondary text
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        sans: ["Rubik", "system-ui", "sans-serif"],
       },
     },
   },
