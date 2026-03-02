@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotion } from "@/lib/gsap";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { Sparkles, TrendingUp, Search, Zap, Palette, ArrowRight, Target } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,13 +16,11 @@ export default function Hero() {
   const subtextRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const deviceRef = useRef<HTMLDivElement>(null);
-  const floatingCard1Ref = useRef<HTMLDivElement>(null);
-  const floatingCard2Ref = useRef<HTMLDivElement>(null);
   const glowRingsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (prefersReducedMotion()) {
-      gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current, floatingCard1Ref.current, floatingCard2Ref.current], { opacity: 1, y: 0, scale: 1 });
+      gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current], { opacity: 1, y: 0, scale: 1 });
       return;
     }
 
@@ -30,47 +28,74 @@ export default function Hero() {
       let mm = gsap.matchMedia();
 
       mm.add("(min-width: 768px)", () => {
-        // Desktop pinning and animations
         const scrollTl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top top",
-            end: "+=100%",
+            end: "+=120%",
             pin: true,
-            scrub: 1,
+            scrub: 1.5, // Smoother scrub
             pinSpacing: true,
           },
         });
 
-        scrollTl.to(navRef.current, { opacity: 0, y: -50 }, 0);
-        scrollTl.to(heroPanelRef.current, { y: "-20%", ease: "power2.inOut" }, 0);
-        scrollTl.to(deviceRef.current, { scale: 1.1, y: "-10%", rotationX: 5, ease: "power2.inOut" }, 0.1);
-        scrollTl.to(glowRingsRef.current, { opacity: 1, scale: 1.2 }, 0.2);
-        scrollTl.to([floatingCard1Ref.current, floatingCard2Ref.current], { opacity: 0 }, 0.1);
+        scrollTl.to(navRef.current, { opacity: 0, y: -50, ease: "power2.inOut" }, 0);
+        scrollTl.to(heroPanelRef.current, { scale: 0.95, y: "-10%", borderRadius: "4rem", ease: "power2.inOut" }, 0);
+
+        // Deep 3D tilt as you scroll away
+        scrollTl.to(deviceRef.current, {
+          scale: 1.2,
+          y: "-15%",
+          rotationX: 25,
+          rotationY: -10,
+          transformPerspective: 1000,
+          ease: "power2.inOut",
+          boxShadow: "0 60px 100px -20px rgba(249,115,22,0.4)"
+        }, 0);
+
+        scrollTl.to(glowRingsRef.current, { opacity: 1, scale: 1.5, y: -100 }, 0);
       });
 
       mm.add("(max-width: 767px)", () => {
-        // Mobile: No pinning, simple static state or light entry
-        gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current, floatingCard1Ref.current, floatingCard2Ref.current], { opacity: 1, y: 0, scale: 1 });
+        gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current], { opacity: 1, y: 0, scale: 1 });
       });
 
-      // Entry animations (Simplified & Faster)
+      // Entry animations
       const entryTl = gsap.timeline();
+      entryTl.fromTo(navRef.current, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" });
+      entryTl.fromTo(headlineRef.current, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out" }, "-=0.5");
+      entryTl.fromTo(subtextRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.7");
+      entryTl.fromTo(buttonsRef.current?.children || [], { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out" }, "-=0.5");
+      entryTl.fromTo(deviceRef.current, { y: 60, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" }, "-=0.6");
 
-      entryTl.fromTo(navRef.current, { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 });
-      entryTl.fromTo(headlineRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, "-=0.3");
-      entryTl.fromTo(subtextRef.current, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, "-=0.3");
-      entryTl.fromTo(buttonsRef.current?.children || [], { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, stagger: 0.05 }, "-=0.2");
-      entryTl.fromTo(deviceRef.current, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, "-=0.3");
-      entryTl.fromTo([floatingCard1Ref.current, floatingCard2Ref.current], { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, stagger: 0.1 }, "-=0.4");
+      // Floating animations for mock UI cards
+      const floatingCards = gsap.utils.toArray(".mock-float-card");
+      floatingCards.forEach((card, i) => {
+        gsap.to(card as Element, {
+          y: i % 2 === 0 ? -12 : 12,
+          rotation: i % 2 === 0 ? 2 : -2,
+          duration: 3 + i,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      });
 
-      // Mouse interaction (Desktop only)
+      // Simple parallax on mouse move for desktop
       const moveDevice = (e: MouseEvent) => {
         if (window.innerWidth < 768) return;
         const { clientX, clientY } = e;
         const xPos = (clientX / window.innerWidth - 0.5) * 20;
         const yPos = (clientY / window.innerHeight - 0.5) * 20;
-        gsap.to(deviceRef.current, { x: xPos, y: yPos, rotationY: xPos / 4, rotationX: -yPos / 4, duration: 0.8, ease: "power2.out" });
+
+        gsap.to(deviceRef.current, {
+          x: xPos,
+          y: yPos,
+          rotationY: xPos / 2,
+          rotationX: -yPos / 2,
+          duration: 1.5,
+          ease: "power2.out"
+        });
       };
 
       window.addEventListener("mousemove", moveDevice);
@@ -86,147 +111,181 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-dark-bg overflow-hidden"
+      className="relative min-h-screen bg-[#050505] overflow-hidden"
     >
-      <div
-        ref={navRef}
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 opacity-0"
-      >
-        <nav className="flex items-center gap-8 px-6 py-3 bg-black/80 backdrop-blur-xl rounded-full border border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-pastel-blue to-pastel-lavender rounded-lg flex items-center justify-center">
-              <span className="text-black text-sm font-bold">LG</span>
+      <div ref={navRef} className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4 pointer-events-auto">
+        <nav className="flex items-center justify-between px-6 py-4 bg-black/60 backdrop-blur-2xl rounded-full border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20 border border-white/20 hover:scale-105 transition-transform cursor-pointer">
+              <span className="text-black text-sm font-black tracking-tighter">LG</span>
             </div>
-            <span className="text-white font-semibold">LumaGrowth</span>
+            <span className="text-white font-bold tracking-tight hidden sm:block">LumaGrowth</span>
           </div>
-
-          <div className="hidden md:flex items-center gap-6">
-            <a href="#services" className="text-white/70 hover:text-white text-sm transition-colors">
-              Services
-            </a>
-            <a href="#work" className="text-white/70 hover:text-white text-sm transition-colors">
-              Work
-            </a>
-            <a href="#pricing" className="text-white/70 hover:text-white text-sm transition-colors">
-              Pricing
-            </a>
-            <a href="#contact" className="text-white/70 hover:text-white text-sm transition-colors">
-              Contact
-            </a>
+          <div className="hidden md:flex items-center gap-8 px-4">
+            <a href="#services" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">Services</a>
+            <a href="#work" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">Work</a>
+            <a href="#contact" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">Contact</a>
           </div>
-
-          <div className="flex items-center gap-2">
-            <button className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-              <Sparkles className="w-4 h-4 text-white" />
-            </button>
-            <button className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-              <TrendingUp className="w-4 h-4 text-white" />
-            </button>
-          </div>
+          <button className="w-10 h-10 rounded-full bg-orange-500/10 hover:bg-orange-500/20 flex items-center justify-center border border-orange-500/30 transition-colors shadow-[0_0_15px_rgba(249,115,22,0.15)] cursor-pointer">
+            <Sparkles className="w-4 h-4 text-orange-500" />
+          </button>
         </nav>
       </div>
 
       <div
         ref={heroPanelRef}
-        className="relative mx-4 md:mx-8 mt-24 rounded-[3rem] overflow-hidden gpu-accelerate"
+        className="relative mx-4 md:mx-8 md:mt-10 rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.8)] bg-[#0A0A0A]"
         style={{
-          background: "linear-gradient(135deg, #A8C5FF 0%, #D4B8FF 100%)",
-          minHeight: "calc(100vh - 8rem)",
+          minHeight: "calc(100vh - 4rem)",
         }}
       >
-        <div className="absolute top-10 left-10 w-64 h-64 bg-blue-400/30 rounded-full blur-[80px]" />
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-400/30 rounded-full blur-[100px]" />
 
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] px-6 py-20">
+        {/* Deep ambient back glows */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-600/10 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-orange-500/5 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[50vh] bg-gradient-to-b from-transparent via-orange-500/5 to-transparent blur-[100px] pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-6 pt-32 pb-20">
+
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/60 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-md">
+            <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+            Next-Gen Performance
+          </div>
+
           <h1
             ref={headlineRef}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-black text-center max-w-4xl leading-tight"
+            className="text-6xl md:text-8xl lg:text-9xl font-black text-white text-center max-w-6xl leading-[0.9] tracking-tighter mb-8"
           >
-            Launch campaigns that actually convert
+            Scale at the speed <br className="hidden md:block" />
+            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 pb-2">
+              of creativity.
+              {/* Underline swoosh */}
+              <svg className="absolute w-full h-8 -bottom-4 left-0 text-orange-500/50 pointer-events-none hidden md:block" viewBox="0 0 300 24" preserveAspectRatio="none">
+                <path d="M2,20 Q150,0 298,20" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            </span>
           </h1>
 
           <p
             ref={subtextRef}
-            className="mt-6 text-lg md:text-xl text-black/70 text-center max-w-2xl"
+            className="mt-2 text-xl md:text-2xl text-white/50 text-center max-w-2xl font-light tracking-wide leading-relaxed"
           >
-            Performance marketing + creative + CRO. We help brands scale profitably.
+            Stop guessing. Start scaling. Dominate your market with campaigns that actually convert.
           </p>
 
-          <div ref={buttonsRef} className="flex flex-wrap justify-center gap-4 mt-10">
-            <button className="px-8 py-4 bg-black text-white rounded-full font-medium flex items-center gap-2 hover:bg-black/80 transition-colors">
-              Book a Strategy Call
+          <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 w-full sm:w-auto relative z-20">
+            <button className="group relative flex items-center justify-center gap-3 px-10 py-5 bg-orange-500 text-black rounded-full font-bold text-lg w-full sm:w-auto overflow-hidden transition-transform hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(249,115,22,0.4)]">
+              <span className="relative z-10">Start Scaling</span>
+              <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
             </button>
-            <button className="px-8 py-4 bg-white/50 backdrop-blur-sm text-black rounded-full font-medium flex items-center gap-2 hover:bg-white/70 transition-colors border border-black/10">
-              See Case Studies
+
+            <button className="flex items-center justify-center gap-3 px-10 py-5 bg-white/[0.03] backdrop-blur-md text-white border border-white/10 rounded-full font-bold text-lg w-full sm:w-auto transition-colors hover:bg-white/[0.08] hover:border-white/20">
+              View Results
             </button>
           </div>
 
-          <div ref={deviceRef} className="relative mt-16">
-            <div className="relative w-[300px] md:w-[400px] h-[500px] md:h-[600px] bg-black rounded-[2.5rem] border-8 border-gray-800 shadow-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <p className="text-white/50 text-sm">Total Revenue</p>
-                    <p className="text-white text-2xl font-bold">$124,592</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-green-400 text-sm">
-                    <TrendingUp className="w-4 h-4" />
-                    <span>+24.5%</span>
-                  </div>
+          <div ref={deviceRef} className="relative mt-24 md:mt-32 w-full max-w-5xl mx-auto perspective-2000 pointer-events-none">
+
+            {/* Massive Aura behind Dashboard */}
+            <div className="absolute inset-0 bg-gradient-to-t from-orange-500/30 to-orange-500/0 blur-[100px] rounded-[100px] scale-110 -z-10" />
+
+            {/* The Main Mock App Window */}
+            <div className="relative w-full aspect-[16/10] md:aspect-[21/9] bg-[#0A0A0A] rounded-[2rem] md:rounded-[3rem] border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden">
+
+              {/* Glass Header */}
+              <div className="absolute top-0 inset-x-0 h-14 md:h-16 border-b border-white/5 flex items-center px-6 md:px-8 gap-4 bg-white/[0.02] backdrop-blur-xl z-20">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-white/10" />
+                  <div className="w-3 h-3 rounded-full bg-white/10" />
+                  <div className="w-3 h-3 rounded-full bg-white/10" />
                 </div>
 
-                <div className="h-32 bg-gradient-to-r from-pastel-purple/20 to-pastel-blue/20 rounded-2xl mb-6 flex items-end p-4">
-                  <div className="flex items-end gap-2 w-full h-full">
-                    {[40, 60, 45, 80, 55, 90, 70, 85, 65, 95].map((h, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 bg-gradient-to-t from-pastel-purple to-pastel-blue rounded-t-sm"
-                        style={{ height: `${h}%` }}
-                      />
-                    ))}
-                  </div>
+                {/* Mock Search Bar */}
+                <div className="mx-auto w-1/3 max-w-[300px] h-8 rounded-full bg-white/5 flex items-center px-4 border border-white/5">
+                  <div className="w-full h-1.5 bg-white/10 rounded-full" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-2xl p-4">
-                    <p className="text-white/50 text-xs">ROAS</p>
-                    <p className="text-white text-xl font-bold">4.2x</p>
-                  </div>
-                  <div className="bg-white/5 rounded-2xl p-4">
-                    <p className="text-white/50 text-xs">CPA</p>
-                    <p className="text-white text-xl font-bold">$18.50</p>
-                  </div>
-                  <div className="bg-white/5 rounded-2xl p-4">
-                    <p className="text-white/50 text-xs">CTR</p>
-                    <p className="text-white text-xl font-bold">3.8%</p>
-                  </div>
-                  <div className="bg-white/5 rounded-2xl p-4">
-                    <p className="text-white/50 text-xs">Conversions</p>
-                    <p className="text-white text-xl font-bold">1,247</p>
-                  </div>
+                <div className="px-5 py-2 bg-orange-500/10 rounded-full border border-orange-500/20 text-[10px] md:text-xs text-orange-500 font-bold tracking-widest uppercase flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                  Live Sync
                 </div>
               </div>
-            </div>
 
-            <div
-              ref={floatingCard1Ref}
-              className="absolute -right-16 top-20 w-32 bg-black rounded-2xl p-3 shadow-xl border border-white/10 opacity-0"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-green-400" />
+              {/* Main Dashboard Grid */}
+              <div className="absolute inset-0 pt-16 md:pt-20 px-6 md:px-10 pb-8 flex flex-col md:flex-row gap-6 md:gap-8 bg-[url('https://transparenttextures.com/patterns/cubes.png')] bg-repeat bg-opacity-5">
+
+                {/* Left Sidebar Mock */}
+                <div className="hidden md:flex w-64 flex-col gap-4 relative z-10 border-r border-white/5 pr-8">
+                  <div className="h-4 w-20 bg-white/20 rounded-full mb-8" />
+                  <div className="h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center px-4 gap-3">
+                    <div className="w-6 h-6 rounded-lg bg-orange-500/20 flex items-center justify-center">
+                      <TrendingUp className="w-3 h-3 text-orange-500" />
+                    </div>
+                    <div className="h-2 w-20 bg-orange-500/50 rounded-full" />
+                  </div>
+                  <div className="h-12 rounded-2xl bg-white/5 flex items-center px-4 gap-3">
+                    <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center">
+                      <Target className="w-3 h-3 text-white/40" />
+                    </div>
+                    <div className="h-2 w-24 bg-white/20 rounded-full" />
+                  </div>
+                  <div className="h-12 rounded-2xl bg-white/5 flex items-center px-4 gap-3">
+                    <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center">
+                      <Palette className="w-3 h-3 text-white/40" />
+                    </div>
+                    <div className="h-2 w-16 bg-white/20 rounded-full" />
+                  </div>
                 </div>
-                <span className="text-white text-xs font-medium">Leads</span>
-              </div>
-              <p className="text-white text-lg font-bold">+156%</p>
-            </div>
 
-            <div
-              ref={floatingCard2Ref}
-              className="absolute -left-12 bottom-32 w-28 bg-black rounded-2xl p-3 shadow-xl border border-white/10 opacity-0"
-            >
-              <p className="text-white/50 text-xs">Active Ads</p>
-              <p className="text-white text-lg font-bold">42</p>
+                {/* Main Content Area */}
+                <div className="flex-1 flex flex-col gap-6 md:gap-8 min-w-0">
+                  <div className="flex justify-between items-end">
+                    <div className="space-y-3">
+                      <div className="h-3 w-16 bg-orange-500/50 rounded-full" />
+                      <div className="h-10 w-48 bg-white/20 rounded-xl" />
+                    </div>
+                    <div className="hidden md:flex gap-2">
+                      <div className="h-10 w-10 rounded-xl bg-white/5" />
+                      <div className="h-10 w-10 rounded-xl bg-white/5" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                    {/* Floating Stat Card 1 */}
+                    <div className="mock-float-card h-32 md:h-40 rounded-3xl bg-gradient-to-br from-[#1A1A1A] to-[#111] border border-white/10 p-5 md:p-6 shadow-2xl relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/20 rounded-full blur-[40px] -mr-16 -mt-16 group-hover:bg-orange-500/30 transition-colors" />
+                      <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center mb-4 border border-orange-500/30">
+                        <Zap className="w-4 h-4 text-orange-500" />
+                      </div>
+                      <div className="h-8 md:h-10 w-24 md:w-32 bg-white/20 rounded-xl mb-3" />
+                      <div className="h-2 w-16 bg-white/10 rounded-full" />
+                    </div>
+
+                    {/* Floating Stat Card 2 */}
+                    <div className="mock-float-card h-32 md:h-40 rounded-3xl bg-gradient-to-br from-[#1A1A1A] to-[#111] border border-white/10 p-5 md:p-6 shadow-2xl relative overflow-hidden group" style={{ animationDelay: "1s" }}>
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[40px] -mr-16 -mt-16 group-hover:bg-blue-500/20 transition-colors" />
+                      <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center mb-4 border border-blue-500/20">
+                        <Search className="w-4 h-4 text-blue-500" />
+                      </div>
+                      <div className="h-8 md:h-10 w-20 md:w-28 bg-white/20 rounded-xl mb-3" />
+                      <div className="h-2 w-20 bg-white/10 rounded-full" />
+                    </div>
+
+                    {/* Large Chart Area Mock */}
+                    <div className="mock-float-card col-span-2 md:col-span-1 h-32 md:h-40 rounded-3xl bg-[#111] border border-white/5 p-5 md:p-6 shadow-xl flex flex-col justify-end" style={{ animationDelay: "2s" }}>
+                      <div className="flex items-end gap-2 w-full h-[60%] opacity-80 mt-auto">
+                        <div className="flex-1 bg-white/10 rounded-t-md h-[40%]" />
+                        <div className="flex-1 bg-white/10 rounded-t-md h-[50%]" />
+                        <div className="flex-1 bg-white/20 rounded-t-md h-[80%]" />
+                        <div className="flex-1 bg-orange-500/50 rounded-t-md h-[95%]" />
+                        <div className="flex-1 bg-orange-500 rounded-t-md h-[100%] drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
@@ -234,13 +293,10 @@ export default function Hero() {
 
       <div
         ref={glowRingsRef}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0"
-        style={{ top: "35%", scale: 1.5 }}
+        className="absolute inset-x-0 bottom-0 flex items-center justify-center pointer-events-none opacity-0 h-1/2 -z-10"
       >
-        <div className="relative w-[800px] h-[800px] bg-pastel-purple/10 rounded-full blur-[120px]" />
+        <div className="w-full h-full bg-orange-600/20 blur-[200px] translate-y-1/2" />
       </div>
-
-      <div className="absolute right-1/4 top-1/2 w-2 h-2 bg-pastel-purple rounded-full shadow-[0_0_20px_rgba(179,71,217,0.8)] animate-pulse-glow" />
     </section>
   );
 }

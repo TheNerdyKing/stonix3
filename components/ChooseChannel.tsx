@@ -4,14 +4,14 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotion } from "@/lib/gsap";
+import { Search, Target, Palette, Settings } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ChooseChannel() {
   const sectionRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const sticker1Ref = useRef<HTMLDivElement>(null);
-  const sticker2Ref = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
@@ -33,40 +33,25 @@ export default function ChooseChannel() {
         }
       );
 
-      gsap.fromTo(
-        sticker1Ref.current,
-        { scale: 0, rotation: -30, opacity: 0 },
-        {
-          scale: 1,
-          rotation: -8,
-          opacity: 1,
-          duration: 0.6,
-          ease: "back.out(1.7)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        sticker2Ref.current,
-        { scale: 0, rotation: 30, opacity: 0 },
-        {
-          scale: 1,
-          rotation: 5,
-          opacity: 1,
-          duration: 0.6,
-          delay: 0.1,
-          ease: "back.out(1.7)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+      const cards = cardsRef.current?.querySelectorAll(".feature-card");
+      if (cards) {
+        gsap.fromTo(
+          cards,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
 
     }, sectionRef);
 
@@ -76,73 +61,59 @@ export default function ChooseChannel() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[50vh] bg-white py-24 overflow-hidden"
+      className="relative min-h-[60vh] bg-[#050505] py-32 overflow-hidden border-t border-white/5"
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <p className="text-gray-500 text-sm uppercase tracking-wider mb-4">
-          What&apos;s your preferred growth channel?
-        </p>
+      {/* Dynamic Background Glow */}
+      <div className="absolute top-1/2 left-3/4 w-[500px] h-[500px] bg-orange-600/5 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="relative">
-          <h2
-            ref={headlineRef}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold text-black opacity-0"
-          >
-            Choose your
-            <br />
-            channel
-          </h2>
-
-          <div
-            ref={sticker1Ref}
-            className="absolute top-0 right-[10%] md:right-[25%] px-6 py-3 bg-pastel-purple rounded-2xl shadow-lg opacity-0 z-20"
-            style={{ transform: "rotate(-8deg)" }}
-          >
-            <span className="text-black font-semibold text-lg">SEO & Content</span>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+        <div className="flex flex-col md:flex-row items-end justify-between gap-12 mb-20">
+          <div className="max-w-2xl">
+            <p className="text-orange-500 text-xs font-bold uppercase tracking-[0.3em] mb-6">
+              Growth Infrastructure
+            </p>
+            <h2
+              ref={headlineRef}
+              className="text-5xl md:text-8xl font-bold text-white tracking-tighter leading-[0.9]"
+            >
+              Precision <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">marketing.</span>
+            </h2>
           </div>
+          <p className="text-white/30 text-lg md:text-xl font-light max-w-sm italic">
+            Helping ambitious brands move faster and grow smarter.
+          </p>
+        </div>
 
-          <div
-            ref={sticker2Ref}
-            className="absolute top-16 right-[5%] md:right-[15%] px-6 py-3 bg-pastel-blue rounded-2xl shadow-lg opacity-0 z-20"
-            style={{ transform: "rotate(5deg)" }}
-          >
-            <span className="text-black font-semibold text-lg">Paid Ads</span>
-          </div>
-
-          <div
-            className="absolute -bottom-10 left-[5%] px-6 py-3 bg-pastel-green rounded-2xl shadow-lg z-20 hidden md:block"
-            style={{ transform: "rotate(-5deg)" }}
-          >
-            <span className="text-black font-semibold text-lg">CRO & Funnels</span>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mt-24">
-            {[
-              {
-                title: "Inbound Marketing",
-                desc: "Drive traffic that actually wants to buy your product.",
-                color: "bg-pastel-blue/10",
-              },
-              {
-                title: "Scale Paid Channels",
-                desc: "High ROAS campaigns on Google, Meta, and TikTok.",
-                color: "bg-pastel-purple/10",
-              },
-              {
-                title: "Conversion Design",
-                desc: "Landing pages designed to maximize your lead volume.",
-                color: "bg-pastel-green/10",
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className={`p-10 rounded-[2.5rem] ${item.color} border border-black/5 hover:border-black/10 transition-colors`}
-              >
-                <h4 className="text-2xl font-bold text-black mb-4">{item.title}</h4>
-                <p className="text-gray-600">{item.desc}</p>
+        <div ref={cardsRef} className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              title: "Performance Ads",
+              desc: "High-ROAS campaigns across Meta, Google, and TikTok.",
+              icon: Target,
+            },
+            {
+              title: "SEO Dynamics",
+              desc: "Strategic content that captures intent and converts.",
+              icon: Search,
+            },
+            {
+              title: "Brand Impact",
+              desc: "Creative assets designed for the next generation of scroll.",
+              icon: Palette,
+            },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="feature-card group p-10 rounded-[3rem] bg-white/[0.02] border border-white/5 hover:border-orange-500/20 hover:bg-orange-500/[0.03] transition-all duration-700"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-10 group-hover:scale-110 group-hover:bg-orange-500/10 transition-all duration-700 border border-white/5">
+                <item.icon className="w-6 h-6 text-white group-hover:text-orange-500 transition-colors" />
               </div>
-            ))}
-          </div>
+              <h4 className="text-2xl font-bold text-white mb-6 tracking-tight">{item.title}</h4>
+              <p className="text-white/30 leading-relaxed font-light">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

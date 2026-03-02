@@ -92,80 +92,66 @@ export default function Pricing() {
     <section
       ref={sectionRef}
       id="pricing"
-      className="relative min-h-screen bg-dark-bg py-24 px-4 md:px-8"
+      className="relative min-h-screen bg-[#050505] py-24 px-4 md:px-8 overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto text-center mb-16">
-        <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
-          Unlock all benefits
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-orange-500/10 to-transparent" />
+
+      <div className="max-w-7xl mx-auto text-center mb-16 relative z-10">
+        <h2 className="text-4xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+          Unlock all <span className="text-orange-500">benefits</span>
         </h2>
-        <p className="text-white/60 text-lg max-w-2xl mx-auto">
-          Transparent pricing that scales with your growth. No hidden fees, no surprises.
+        <p className="text-white/40 text-lg max-w-2xl mx-auto font-light">
+          Transparent pricing that scales with your growth. No hidden fees, just results.
         </p>
       </div>
 
       <div
         ref={cardsRef}
-        className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 md:gap-8"
+        className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 md:gap-8 relative z-10"
       >
         {plans.map((plan, index) => (
           <div
             key={plan.name}
-            className={`pricing-card relative rounded-[2.5rem] p-8 border transition-all duration-300 ${
-              plan.highlighted
-                ? "bg-dark-card border-pastel-purple/50 shadow-[0_0_40px_rgba(179,71,217,0.15)] scale-105"
-                : "bg-dark-card/50 border-dark-border hover:border-white/20"
-            } ${hoveredIndex === index ? "-translate-y-2" : ""}`}
+            className={`pricing-card relative rounded-[3rem] p-10 border transition-all duration-500 ${plan.highlighted
+                ? "bg-[#0A0A0A] border-orange-500/30 shadow-[0_30px_60px_rgba(249,115,22,0.1)] scale-105 z-20"
+                : "bg-white/[0.02] border-white/5 hover:border-white/10"
+              } ${hoveredIndex === index ? "-translate-y-3" : ""}`}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
             {plan.highlighted && (
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-pastel-purple rounded-full flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-white" />
-                <span className="text-white text-sm font-medium">Most Popular</span>
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-orange-500 rounded-full flex items-center gap-2 shadow-lg">
+                <Sparkles className="w-4 h-4 text-black" />
+                <span className="text-black text-xs font-bold uppercase tracking-widest">Most Popular</span>
               </div>
             )}
 
-            <h3 className="text-white text-xl font-semibold mb-2">{plan.name}</h3>
+            <h3 className="text-white/50 text-sm font-bold uppercase tracking-widest mb-6">{plan.name}</h3>
 
-            <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-white text-5xl font-bold">{plan.price}</span>
-              <span className="text-white/50">{plan.period}</span>
+            <div className="flex items-baseline gap-1 mb-6">
+              <span className="text-white text-5xl font-bold tabular-nums">{plan.price}</span>
+              <span className="text-white/30 text-sm font-medium">{plan.period}</span>
             </div>
 
-            <p className="text-white/60 text-sm mb-8">{plan.description}</p>
+            <p className="text-white/40 text-sm mb-10 min-h-[40px] leading-relaxed italic">"{plan.description}"</p>
 
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-4 mb-10">
               {plan.features.map((feature, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-pastel-purple/20 flex items-center justify-center flex-shrink-0">
-                    <Check className="w-3 h-3 text-pastel-purple" />
+                <li key={i} className="flex items-center gap-4">
+                  <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center flex-shrink-0 border border-orange-500/20">
+                    <Check className="w-3 h-3 text-orange-500" />
                   </div>
-                  <span className="text-white/80 text-sm">{feature}</span>
+                  <span className="text-white/70 text-sm font-medium">{feature}</span>
                 </li>
               ))}
             </ul>
 
             <button
-              className={`w-full py-4 rounded-full font-medium transition-all duration-300 relative overflow-hidden group ${
-                plan.highlighted
-                  ? "bg-white text-black hover:bg-gray-100"
-                  : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
-              }`}
+              className={`w-full py-5 rounded-full font-bold transition-all duration-300 relative overflow-hidden group ${plan.highlighted
+                  ? "bg-orange-500 text-black hover:bg-orange-400 shadow-xl"
+                  : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
+                }`}
             >
-              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                {[...Array(5)].map((_, i) => (
-                  <span
-                    key={i}
-                    className="absolute w-1 h-1 bg-pastel-purple rounded-full animate-ping"
-                    style={{
-                      left: `${20 + i * 15}%`,
-                      top: `${30 + (i % 2) * 40}%`,
-                      animationDelay: `${i * 0.2}s`,
-                      animationDuration: "1.5s",
-                    }}
-                  />
-                ))}
-              </span>
               <span className="relative z-10">Get Started</span>
             </button>
           </div>
