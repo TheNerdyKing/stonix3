@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #FFFFFF;
-  --pastel-gradient: linear-gradient(135deg, #A8C5FF 0%, #D4B8FF 100%);
-  --ring-gradient: conic-gradient(from 0deg, #B347D9, #4A90E2, #50C8B8, #B347D9);
+  --background: #0B1220;
+  --foreground: #F6F7FB;
+  --primary: #2563EB;
+  --accent: #06B6D4;
 }
 
 * {

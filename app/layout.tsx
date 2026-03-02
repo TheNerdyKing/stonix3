@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "STONIX - תוצאות. לא שיווק.",
-  description: "אנחנו מטפלים בכל מה שקשור לפרסום - כדי שיהיה לך שקט נפשי. עם מטרה אחת ברורה: להביא לך יותר לקוחות.",
+  title: "STONIX | Results. Not Marketing.",
+  description: "We handle everything related to advertising - so you have peace of mind. With one clear goal: bringing you more customers.",
 };
 
 export default function RootLayout({
@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl">
-      <body className="antialiased bg-dark-bg text-white">
+    <html lang="en" dir="ltr">
+      <body className="antialiased bg-background text-surface">
         {children}
       </body>
     </html>

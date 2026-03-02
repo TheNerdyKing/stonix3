@@ -2,21 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useLenis } from "@/lib/lenis";
 import Preloader from "@/components/Preloader";
 import Hero from "@/components/Hero";
-import GoalStack from "@/components/GoalStack";
-import ChooseChannel from "@/components/ChooseChannel";
-import ChannelScroller from "@/components/ChannelScroller";
-import ProgressRing from "@/components/ProgressRing";
-import BentoCards from "@/components/BentoCards";
+import Services from "@/components/Services";
+import CaseStudies from "@/components/CaseStudies";
+import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
-import FinalCTA from "@/components/FinalCTA";
+import Pricing from "@/components/Pricing";
+import FAQ from "@/components/FAQ";
+import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
-  const lenisRef = useLenis();
 
   useEffect(() => {
     if (isLoading) {
@@ -33,7 +32,7 @@ export default function Home() {
   const handlePreloaderComplete = () => {
     setIsLoading(false);
 
-    // Give double refresh for security on layout stability
+    // Refresh ScrollTrigger after content renders
     setTimeout(() => {
       ScrollTrigger.refresh();
     }, 100);
@@ -41,7 +40,6 @@ export default function Home() {
       ScrollTrigger.refresh();
     }, 500);
 
-    // Specifically wait for all fonts to load to prevent layout shifts on Vercel
     if (typeof document !== "undefined" && document.fonts) {
       document.fonts.ready.then(() => {
         ScrollTrigger.refresh();
@@ -50,18 +48,19 @@ export default function Home() {
   };
 
   return (
-    <main className="relative">
+    <main className="relative bg-surface text-foreground font-sans min-h-screen">
       {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
 
       <div className={isLoading ? "opacity-0" : "opacity-100 transition-opacity duration-500"}>
+        <Navbar />
         <Hero />
-        <GoalStack />
-        <ChooseChannel />
-        <ChannelScroller />
-        <ProgressRing />
-        <BentoCards />
+        <Services />
+        <CaseStudies />
+        <Process />
         <Testimonials />
-        <FinalCTA />
+        <Pricing />
+        <FAQ />
+        <Contact />
         <Footer />
       </div>
     </main>
